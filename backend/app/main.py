@@ -1,12 +1,13 @@
-curl -X POST "http://localhost:8000/upload" \
-  -F "file=@test.pdf.pdf"from fastapi import FastAPI, UploadFile, File
+from fastapi import FastAPI, File, UploadFile
+from .services.pdf_service import extract_text
+from .services.qwen_service import extract_invoice_data
+
 import os
 import base64
 
 UPLOAD_DIR = "uploads"
 
 app = FastAPI()
-
 
 @app.get("/")
 def home():
@@ -26,9 +27,20 @@ async def upload_pdf(file: UploadFile = File(...)):
     with open(file_path, "wb") as f:
         f.write(content)
 
+    print("PDF SACUVAN!")
+
+    text = extract_text(file_path)
+
+    print("PDF PROCITAN")
+    print(text[:200])
+
+    invoice_data = extract_invoice_data(text)
+
+    print("GOTOVO")
+
     return {
         "filename": file.filename,
-        "base64length": len(pdf_base64)
+        "invoice": invoice_data
     }
 
 
