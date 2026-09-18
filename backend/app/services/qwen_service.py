@@ -1,6 +1,7 @@
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import torch
 import json
+import re
 
 model_name = "Qwen/Qwen2.5-1.5B-Instruct"
 
@@ -12,7 +13,14 @@ def extract_invoice_data(text:str):
 	prompt = f"""Extract invoice information. Return ONLY valid JSON.
 		Return ONLY valid JSON.
 
-		Use exactly this schema:
+		Do NOT explain your answer.
+		Do NOT add comments.
+		Do NOT markdown.
+		Do NOT add code examples.
+		Do NOT add Python code.
+		Do NOT add any text before or after JSON.
+
+		Expected format:
 
 		{{
 			"invoice_number": "",
@@ -42,7 +50,10 @@ def extract_invoice_data(text:str):
 		generated_tokens,
 		skip_special_tokens = True)
 
-	try:
-		return json.loads(answer)
-	except json.JSONDecodeError:
-		return{"raw_output": answer}
+	match = re.search(r"\{.*\}", answer, re.DOTALL)
+	if match:
+		try:
+			return json.loads(match.group())
+		except json.JSONDecodeError:
+			return{"raw_output": answer}
+	return {"raw_output": answer}
