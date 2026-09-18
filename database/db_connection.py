@@ -20,16 +20,17 @@ def init_db():
     connection = get_connection()
     cursor = connection.cursor()
     cursor.execute ("""CREATE TABLE IF NOT EXISTS invoices(
-                        ID VARCHAR(36) PRIMARY KEY,
-                        file_name VARCHAR(255),
-                        created_at TIMESTAMP,
-                        status_obrade VARCHAR(20),
-                        document_text TEXT, 
-                        date_of_issue DATE,
-                        client_name VARCHAR(100),
-                        PIB varchar(20),
-                        amount DECIMAL(10,2)
-                    )""")
+                            ID VARCHAR(36) PRIMARY KEY,
+                            file_name VARCHAR(255),
+                            created_at TIMESTAMP,
+                            status_obrade VARCHAR(20),
+                            document_text TEXT,
+                            invoice_number VARCHAR(50),
+                            date_of_issue DATE,
+                            client_name VARCHAR(100),
+                            PIB VARCHAR(20),
+                            amount DECIMAL(10,2),
+                            currency VARCHAR(4))""")
     connection.commit()
     cursor.close()
     connection.close()
