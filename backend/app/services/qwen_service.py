@@ -24,7 +24,7 @@ def extract_invoice_data(text:str):
 
 		{{
 			"invoice_number": "",
-			"date_of_issues": "",
+			"date_of_issue": "",
 			"client_name": "",
 			"client_tax_id": "",
 			"total_amount": "",

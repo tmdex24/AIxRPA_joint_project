@@ -1,6 +1,7 @@
 from fastapi import FastAPI, File, UploadFile
 from .services.pdf_service import extract_text
 from .services.qwen_service import extract_invoice_data
+from datetime import datetime
 
 import os
 import base64
@@ -27,16 +28,23 @@ async def upload_pdf(file: UploadFile = File(...)):
     with open(file_path, "wb") as f:
         f.write(content)
 
-    print("PDF SACUVAN!")
-
     text = extract_text(file_path)
-
-    print("PDF PROCITAN")
-    print(text[:200])
 
     invoice_data = extract_invoice_data(text)
 
-    print("GOTOVO")
+    amount = invoice_data.get("total_amount")
+
+    if amount:
+        amount = float(amount.replace(",",""))
+        #izvlacim amount iz invoice data, pretvaram ga u float, jer baza zahteva decimal tip, a ne string!
+        invoice_data["total_amount"] = amount
+
+    date = invoice_data.get("date_of_issue")
+
+    date = datetime.strptime(
+        date,
+        "%d/%m/%Y"
+    ).strftime("%Y-%m-%d")
 
     return {
         "filename": file.filename,
