@@ -55,10 +55,18 @@ async def upload_pdf(file: UploadFile = File(...)):
     )
 
     if date:
-        invoice_data["date_of_issue"] = datetime.strptime(
-            date,
-            "%d/%m/%Y"
-        ).strftime("%Y-%m-%d")
+
+    for fmt in ("%d/%m/%Y", "%Y-%m-%d"):
+
+        try:
+            invoice_data["date_of_issue"] = (
+                datetime.strptime(date, fmt)
+                .strftime("%Y-%m-%d")
+            )
+            break
+
+        except ValueError:
+            passstrftime("%Y-%m-%d")
 
     update_invoice_data(
         invoice_id,
