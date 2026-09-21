@@ -1,2 +1,10 @@
 mysql-connector-python==26.7.0
 python-dotenv==1.2.3
+uvicorn
+fastapi
+pdfplumber
+transformers
+torch
+python-multipart
+mysql-connector-python
+python-dotenv

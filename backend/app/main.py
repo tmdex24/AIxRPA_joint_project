@@ -72,6 +72,17 @@ async def upload_pdf(file: UploadFile = File(...)):
         "COMPLETED"
     )
 
+@app.get("/test-db")
+def test_db():
+
+    insert_invoice(
+        "test-id",
+        "test.pdf",
+        "PROCESSING"
+    )
+
+    return {"status": "ok"}
+
     return {
         "invoice_id": invoice_id,
         "filename": file.filename,
