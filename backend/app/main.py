@@ -1,10 +1,15 @@
 from fastapi import FastAPI, File, UploadFile
 from .services.pdf_service import extract_text
 from .services.qwen_service import extract_invoice_data
-from datetime import datetime
 
+from database.crud import (
+    insert_invoice,
+    update_invoice_data
+)
+
+from datetime import datetime
+import uuid
 import os
-import base64
 
 UPLOAD_DIR = "uploads"
 
@@ -14,19 +19,25 @@ app = FastAPI()
 def home():
     return {"AIxRPA API radi! :)"}
 
-
 @app.post("/upload")
 async def upload_pdf(file: UploadFile = File(...)):
+
     os.makedirs(UPLOAD_DIR, exist_ok=True)
 
     file_path = f"{UPLOAD_DIR}/{file.filename}"
 
     content = await file.read()
 
-    pdf_base64 = base64.b64encode(content).decode("utf-8")
-
     with open(file_path, "wb") as f:
         f.write(content)
+
+    invoice_id = str(uuid.uuid4())
+
+    insert_invoice(
+        invoice_id,
+        file.filename,
+        "PROCESSING"
+    )
 
     text = extract_text(file_path)
 
@@ -35,11 +46,13 @@ async def upload_pdf(file: UploadFile = File(...)):
     amount = invoice_data.get("total_amount")
 
     if amount:
-        amount = float(amount.replace(",",""))
-        #izvlacim amount iz invoice data, pretvaram ga u float, jer baza zahteva decimal tip, a ne string!
+        amount = float(amount.replace(",", ""))
         invoice_data["total_amount"] = amount
 
-    date = invoice_data.get("date_of_issue")
+    date = (
+        invoice_data.get("date_of_issue")
+        or invoice_data.get("date_of_issues")
+    )
 
     if date:
         invoice_data["date_of_issue"] = datetime.strptime(
@@ -47,8 +60,20 @@ async def upload_pdf(file: UploadFile = File(...)):
             "%d/%m/%Y"
         ).strftime("%Y-%m-%d")
 
+    update_invoice_data(
+        invoice_id,
+        text,
+        invoice_data.get("invoice_number"),
+        invoice_data.get("date_of_issue"),
+        invoice_data.get("client_name"),
+        invoice_data.get("client_tax_id"),
+        invoice_data.get("total_amount"),
+        invoice_data.get("currency"),
+        "COMPLETED"
+    )
 
     return {
+        "invoice_id": invoice_id,
         "filename": file.filename,
         "invoice": invoice_data
     }
