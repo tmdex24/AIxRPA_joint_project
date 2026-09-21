@@ -41,14 +41,14 @@ async def upload_pdf(file: UploadFile = File(...)):
 
     date = invoice_data.get("date_of_issue")
 
-    date = datetime.strptime(
-        date,
-        "%d/%m/%Y"
-    ).strftime("%Y-%m-%d")
+    if date:
+        invoice_data["date_of_issue"] = datetime.strptime(
+            date,
+            "%d/%m/%Y"
+        ).strftime("%Y-%m-%d")
+
 
     return {
         "filename": file.filename,
         "invoice": invoice_data
     }
-
-

@@ -20,6 +20,8 @@ def extract_invoice_data(text:str):
 		Do NOT add Python code.
 		Do NOT add any text before or after JSON.
 
+		Return the actual company name, not labels such as "Client", "Seller", "Buyer" or similar.
+
 		Expected format:
 
 		{{
