@@ -40,7 +40,7 @@ def extract_invoice_data(text:str):
 	with torch.no_grad():
 		outputs = model.generate(
 			**inputs,
-			max_new_tokens = 500)
+			max_new_tokens = 800)
 
 	input_length = inputs["input_ids"].shape[1]
 
