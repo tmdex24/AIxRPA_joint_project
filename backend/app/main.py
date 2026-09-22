@@ -15,9 +15,11 @@ UPLOAD_DIR = "uploads"
 
 app = FastAPI()
 
+
 @app.get("/")
 def home():
     return {"AIxRPA API radi! :)"}
+
 
 @app.post("/upload")
 async def upload_pdf(file: UploadFile = File(...)):
@@ -55,10 +57,18 @@ async def upload_pdf(file: UploadFile = File(...)):
     )
 
     if date:
-        invoice_data["date_of_issue"] = datetime.strptime(
-            date,
-            "%d/%m/%Y"
-        ).strftime("%Y-%m-%d")
+
+        for fmt in ("%d/%m/%Y", "%Y-%m-%d"):
+
+            try:
+                invoice_data["date_of_issue"] = (
+                    datetime.strptime(date, fmt)
+                    .strftime("%Y-%m-%d")
+                )
+                break
+
+            except ValueError:
+                pass
 
     update_invoice_data(
         invoice_id,
@@ -71,3 +81,9 @@ async def upload_pdf(file: UploadFile = File(...)):
         invoice_data.get("currency"),
         "COMPLETED"
     )
+
+    return {
+        "invoice_id": invoice_id,
+        "filename": file.filename,
+        "invoice": invoice_data
+    }
