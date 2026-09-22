@@ -20,11 +20,13 @@ def extract_invoice_data(text:str):
 		Do NOT add Python code.
 		Do NOT add any text before or after JSON.
 
+		Return the actual company name, not labels such as "Client", "Seller", "Buyer" or similar.
+
 		Expected format:
 
 		{{
 			"invoice_number": "",
-			"date_of_issues": "",
+			"date_of_issue": "",
 			"client_name": "",
 			"client_tax_id": "",
 			"total_amount": "",
@@ -40,7 +42,7 @@ def extract_invoice_data(text:str):
 	with torch.no_grad():
 		outputs = model.generate(
 			**inputs,
-			max_new_tokens = 500)
+			max_new_tokens = 800)
 
 	input_length = inputs["input_ids"].shape[1]
 

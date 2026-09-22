@@ -3,6 +3,9 @@ from config import DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_PORT
 
 def get_connection():
     try:
+        print("DB_HOST =", DB_HOST)
+        print("DB_USER =", DB_USER)
+        print("DB_NAME =", DB_NAME)
         conn = mysql.connector.connect(
             host=DB_HOST,
             user=DB_USER,
