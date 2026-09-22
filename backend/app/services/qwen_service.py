@@ -20,7 +20,9 @@ def extract_invoice_data(text:str):
 		Do NOT add Python code.
 		Do NOT add any text before or after JSON.
 
-		Return the actual company name, not labels such as "Client", "Seller", "Buyer" or similar.
+		Return the actual total amount, it is located on the last row and last column of the invoice table. It is the largest number on the invoice. It is bolded.
+  
+		Return the actual company name, do NOT add labels such as "Client", "Seller", "Buyer" or similar in front of the company name.
 
 		Expected format:
 
@@ -55,7 +57,7 @@ def extract_invoice_data(text:str):
 	match = re.search(r"\{.*\}", answer, re.DOTALL)
 	if match:
 		try:
-			return json.loads(match.group())
+			return json.loads(match.group()) #parsiranje json-a 
 		except json.JSONDecodeError:
 			return{"raw_output": answer}
 	return {"raw_output": answer}

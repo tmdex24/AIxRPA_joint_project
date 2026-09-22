@@ -1,1 +1,30 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    ports:
+      - "8000:8000"
+    depends_on:
+      - database
+  frontend:
+    build: ./frontend
+    ports:
+      - "8501:8501"
+    depends_on:
+      - backend
+  database:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_USER: ocr_user
+      MYSQL_PASSWORD: ocr_password
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ocr_app
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
 
+volumes:
+  db_data:

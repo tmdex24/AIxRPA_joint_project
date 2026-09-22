@@ -2,11 +2,11 @@ import streamlit as st
 import requests
 import base64
 
-BACKEND_URL = "http://localhost:8000/upload"
+BACKEND_URL = "http://backend:8000/upload"
 
 st.set_page_config(
     page_title="AI Invoice Processing",
-    layout="wide"
+    layout="wide",
 )
 
 st.title("📄 AI Invoice Processing System")

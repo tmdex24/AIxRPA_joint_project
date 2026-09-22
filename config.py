@@ -10,7 +10,7 @@ load_dotenv()
 # DB_NAME = os.getenv("DB_NAME")
 # DB_PORT = os.getenv("DB_PORT")
 
-DB_HOST = "localhost"
+DB_HOST = "database"
 DB_USER = "ocr_user"
 DB_PASSWORD = "ocr_password"
 DB_NAME = "ocr_app"
