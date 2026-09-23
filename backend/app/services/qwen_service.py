@@ -20,11 +20,44 @@ def extract_invoice_data(text:str):
 		Do NOT add Python code.
 		Do NOT add any text before or after JSON.
 
-		Return the actual total amount, it is located on the last row and last column of the invoice table. It is the largest number on the invoice. It is bolded.
+		CRITICAL RULES:
+		- Extract values exactly as they appear in the invoice.
+		- Do not invent or guess missing values.
+		- If a field cannot be found, return an empty string.
+		- Return ONLY the final extracted value for each field.
   
-		Return the actual client name, do NOT add labels such as "Client", "Seller", "Buyer" or similar in front of the client name. The client name is located on the top right of the invoice, below the date of issue.
+		CLIENT NAME RULES:
+ 
+		- The client name is located on the top right side of the invoice.
+		- It is usually below the issue date.
+		- Return ONLY the actual company or person name.
+		- NEVER return labels such as:
+			"Client"
+			"Client:"
+			"Buyer"
+			"Buyer:"
+			"Customer"
+			"Customer:"
+			"Seller"
+			"Seller:"
+			"Bill To"
+			"Bill To:"
+		- Remove any label prefixes and return only the name itself.
+		- If the extracted value is exactly "Client", "Buyer", "Customer", "Seller" or similar label, treat it as invalid and continue searching for the actual name.
+		- The client name must contain the company/person name, not a field label.
+  
+		CLIENT TAX ID RULES:
+  
+		- Return the tax ID belonging to the client.
+		- It is usually directly below the client name.
+  
+		TOTAL AMOUNT RULES:
 
-		Return the actual client tax ID, it is located on the top right of the invoice, below the client name.
+		- Return the FINAL invoice total.
+		- The total amount is usually located in the last row and last column of the invoice table.
+		- Prefer the grand total amount.
+		- Ignore line item amounts, subtotals, VAT percentages and unit prices.
+		- If multiple totals exist, choose the largest final payable amount.
   
 		Expected format:
 
