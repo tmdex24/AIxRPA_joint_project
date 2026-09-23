@@ -22,7 +22,7 @@ def extract_invoice_data(text:str):
 
 		Return the actual total amount, it is located on the last row and last column of the invoice table. It is the largest number on the invoice. It is bolded.
   
-		Return the actual company name, do NOT add labels such as "Client", "Seller", "Buyer" or similar in front of the company name.
+		Return the actual client name, do NOT add labels such as "Client", "Seller", "Buyer" or similar in front of the client name. The client name is located on the top right of the invoice, below the date of issue.
 
 		Expected format:
 
@@ -32,7 +32,7 @@ def extract_invoice_data(text:str):
 			"client_name": "",
 			"client_tax_id": "",
 			"total_amount": "",
-			"correuncy": ""
+			"currency": ""
 		}}
 		Invoice text:
 		{text}
