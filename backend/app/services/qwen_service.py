@@ -24,6 +24,8 @@ def extract_invoice_data(text:str):
   
 		Return the actual client name, do NOT add labels such as "Client", "Seller", "Buyer" or similar in front of the client name. The client name is located on the top right of the invoice, below the date of issue.
 
+		Return the actual client tax ID, it is located on the top right of the invoice, below the client name.
+  
 		Expected format:
 
 		{{
