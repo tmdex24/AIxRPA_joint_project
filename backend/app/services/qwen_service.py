@@ -10,60 +10,56 @@ model = AutoModelForCausalLM.from_pretrained(model_name)
 
 
 def extract_invoice_data(text:str):
-	prompt = f"""Extract invoice information. Return ONLY valid JSON.
+	prompt = f"""
+		You are an invoice data extraction engine.
+
 		Return ONLY valid JSON.
-
-		Do NOT explain your answer.
+		Do NOT explain.
+		Do NOT write code.
+		Do NOT write regex.
+		Do NOT write Python.
 		Do NOT add comments.
-		Do NOT markdown.
-		Do NOT add code examples.
-		Do NOT add Python code.
-		Do NOT add any text before or after JSON.
+		Do NOT add markdown.
+		Do NOT add text before JSON.
+		Do NOT add text after JSON.
 
-		CRITICAL RULES:
-		- Extract values exactly as they appear in the invoice.
-		- Do not invent or guess missing values.
-		- If a field cannot be found, return an empty string.
-		- Return ONLY the final extracted value for each field.
-  
-		IMPORTANT:
-  
-			The invoice always contains two parties:
+		Extraction rules:
 
-			SELLER:
-			- Located first
-			- Located on the left side
-			- Must be ignored completely
+		- Extract values exactly as written in the invoice.
+		- If a value is missing return "".
+		- Never guess.
 
-			CLIENT:
-			- Located after the "Client:" label
-			- Located on the right side
-			- This is the ONLY source for client_name and client_tax_id
+		Client rules:
 
-			CLIENT NAME RULES:
+		- Ignore the Seller section completely.
+		- Extract information ONLY from the Client section.
+		- The Client section contains the buyer information.
+		- The Seller section contains supplier information and must be ignored.
 
-			- Extract the first company name immediately following the "Client:" label.
-			- Stop extraction before the address begins.
-			- Return only the company name.
-			- NEVER include seller information.
-			- NEVER concatenate seller and client names.
-			- NEVER return more than one company name.
+		Client name:
 
-			CLIENT TAX ID RULES:
+		- Return only the client company name.
+		- Do not include addresses.
+		- Do not include cities.
+		- Do not include tax IDs.
+		- Do not concatenate seller and client names.
+		- If both Seller and Client are present, choose only the Client company.
 
-			- Extract the Tax Id found inside the CLIENT section.
-			- Ignore all Tax Id values found in the SELLER section.
-			- If multiple tax IDs exist, select the Tax Id that appears after the Client company name.
-  
-		TOTAL AMOUNT RULES:
+		Client tax ID:
 
-		- Return the FINAL invoice total.
-		- The total amount is usually located in the last row and last column of the invoice table.
-		- Prefer the grand total amount.
-		- Ignore line item amounts, subtotals, VAT percentages and unit prices.
-		- If multiple totals exist, choose the largest final payable amount.
-  
-		Expected format:
+		- Return only the tax ID from the Client section.
+		- Ignore seller tax IDs.
+		- If multiple tax IDs exist, choose the one closest to the client company name.
+
+		Total amount:
+
+		- Return the final payable invoice amount.
+		- Ignore item amounts.
+		- Ignore subtotals.
+		- Ignore VAT rows.
+		- Use the grand total.
+
+		Return EXACTLY this JSON:
 
 		{{
 			"invoice_number": "",
@@ -73,9 +69,12 @@ def extract_invoice_data(text:str):
 			"total_amount": "",
 			"currency": ""
 		}}
+
 		Invoice text:
+
 		{text}
 		"""
+
 
 	inputs = tokenizer(
 		prompt,
