@@ -7,6 +7,12 @@ services:
       - "8000:8000"
     depends_on:
       - database
+    environment:
+      DB_HOST: database
+      DB_USER: ocr_user
+      DB_PASSWORD: ocr_password
+      DB_NAME: ocr_app
+      DB_PORT: 3306
   frontend:
     build: ./frontend
     ports:

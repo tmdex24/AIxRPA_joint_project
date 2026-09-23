@@ -26,30 +26,34 @@ def extract_invoice_data(text:str):
 		- If a field cannot be found, return an empty string.
 		- Return ONLY the final extracted value for each field.
   
-		CLIENT NAME RULES:
- 
-		- The client name is located on the top right side of the invoice.
-		- It is usually below the issue date.
-		- Return ONLY the actual company or person name.
-		- NEVER return labels such as:
-			"Client"
-			"Client:"
-			"Buyer"
-			"Buyer:"
-			"Customer"
-			"Customer:"
-			"Seller"
-			"Seller:"
-			"Bill To"
-			"Bill To:"
-		- Remove any label prefixes and return only the name itself.
-		- If the extracted value is exactly "Client", "Buyer", "Customer", "Seller" or similar label, treat it as invalid and continue searching for the actual name.
-		- The client name must contain the company/person name, not a field label.
+		IMPORTANT:
   
-		CLIENT TAX ID RULES:
-  
-		- Return the tax ID belonging to the client.
-		- It is usually directly below the client name.
+			The invoice always contains two parties:
+
+			SELLER:
+			- Located first
+			- Located on the left side
+			- Must be ignored completely
+
+			CLIENT:
+			- Located after the "Client:" label
+			- Located on the right side
+			- This is the ONLY source for client_name and client_tax_id
+
+			CLIENT NAME RULES:
+
+			- Extract the first company name immediately following the "Client:" label.
+			- Stop extraction before the address begins.
+			- Return only the company name.
+			- NEVER include seller information.
+			- NEVER concatenate seller and client names.
+			- NEVER return more than one company name.
+
+			CLIENT TAX ID RULES:
+
+			- Extract the Tax Id found inside the CLIENT section.
+			- Ignore all Tax Id values found in the SELLER section.
+			- If multiple tax IDs exist, select the Tax Id that appears after the Client company name.
   
 		TOTAL AMOUNT RULES:
 
